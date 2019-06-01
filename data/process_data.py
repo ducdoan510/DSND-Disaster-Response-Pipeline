@@ -1,16 +1,45 @@
 import sys
+import pandas as pd
+from sqlalchemy import create_engine
 
 
 def load_data(messages_filepath, categories_filepath):
-    pass
+    messages = pd.read_csv(messages_filepath)
+    categories = pd.read_csv(categories_filepath)
+    return pd.merge(messages, categories, on='id')
 
 
 def clean_data(df):
-    pass
+    categories = df.categories.str.split(';', expand=True)
+    # select the first row of the categories dataframe
+    row = categories.iloc[0, :]
+
+    # extract a list of new column names for categories.
+    category_colnames = row.map(lambda category: category[:-2]).tolist()
+    categories.columns = category_colnames
+
+    for column in categories:
+        # set each value to be the last character of the string
+        categories[column] = categories[column].astype(str).map(lambda cat: cat[-1])
+        
+        # convert column from string to numeric
+        categories[column] = categories[column].astype(int)
+
+    # drop the original categories column from `df`
+    df = df.drop(['categories'], axis=1)
+    
+    # concatenate the original dataframe with the new `categories` dataframe
+    df = pd.concat([df, categories], axis=1)
+    df = df.drop_duplicates()
+    return df
 
 
 def save_data(df, database_filename):
-    pass  
+    engine = create_engine('sqlite:///%s' % database_filename)
+    table_name = database_filename.replace('.db', '')
+    df.to_sql(table_name, engine, if_exists='replace', index=False, chunksize=500)
+    rows = engine.execute('select * from %s' % table_name).fetchall()
+    print(pd.DataFrame(rows, columns=df.columns))
 
 
 def main():
