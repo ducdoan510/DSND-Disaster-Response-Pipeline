@@ -4,12 +4,23 @@ from sqlalchemy import create_engine
 
 
 def load_data(messages_filepath, categories_filepath):
+    """
+
+    :param messages_filepath: path to csv file with message data
+    :param categories_filepath: path to csv file with category data
+    :return: a dataframe merging the two input datasets
+    """
     messages = pd.read_csv(messages_filepath)
     categories = pd.read_csv(categories_filepath)
     return pd.merge(messages, categories, on='id')
 
 
 def clean_data(df):
+    """
+
+    :param df: the dataframe with message and category info to be cleaned
+    :return: cleaned dataframe
+    """
     categories = df.categories.str.split(';', expand=True)
     # select the first row of the categories dataframe
     row = categories.iloc[0, :]
@@ -35,6 +46,12 @@ def clean_data(df):
 
 
 def save_data(df, database_filename):
+    """
+
+    :param df: the clean dataframe to be saved
+    :param database_filename: path to sqlite db file
+    :return:
+    """
     engine = create_engine('sqlite:///%s' % database_filename)
     table_name = database_filename.replace('.db', '')
     df.to_sql(table_name, engine, if_exists='replace', index=False, chunksize=500)

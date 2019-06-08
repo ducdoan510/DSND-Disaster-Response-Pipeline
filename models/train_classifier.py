@@ -22,6 +22,11 @@ nltk.download('stopwords')
 
 
 def load_data(database_filepath):
+    """
+
+    :param database_filepath: filepath to sqlite db file
+    :return: tuple (X, Y, category_names) with X: messages, Y: category value, category_names: names of categories
+    """
     engine = create_engine("sqlite:///%s" % database_filepath)
     df = pd.read_sql_table('DisasterResponse', engine)
     
@@ -40,6 +45,11 @@ def load_data(database_filepath):
 
 
 def tokenize(text):
+    """
+
+    :param text: the string to tokenize
+    :return: list of tokens from input text
+    """
     
     # normalize case and remove punctuation
     text = re.sub(r"[^a-zA-Z0-9]", " ", text.lower())
@@ -55,6 +65,10 @@ def tokenize(text):
 
 
 def build_model():
+    """
+
+    :return: a pipeline model consisting of text preproessing and classifier
+    """
     # for the purpose of this project, we only tune one parameter to save the training time
     parameters = {
         'clf__estimator__min_samples_split': [2, 5]
@@ -71,6 +85,14 @@ def build_model():
 
 
 def evaluate_model(model, X_test, Y_test, category_names):
+    """
+
+    :param model: a pipeline model classifier
+    :param X_test: test independent variables
+    :param Y_test: test dependent variables
+    :param category_names: list of category names
+    :return:
+    """
     Y_cv_pred = model.predict(X_test)
     col_count = Y_cv_pred.shape[1]
     for col_idx in range(col_count):
@@ -81,6 +103,12 @@ def evaluate_model(model, X_test, Y_test, category_names):
 
 
 def save_model(model, model_filepath):
+    """
+
+    :param model: trained model to be saved
+    :param model_filepath: path to pickle file to save the model
+    :return:
+    """
     pickle.dump(model, open(model_filepath, 'wb'))
 
 
