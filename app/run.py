@@ -43,6 +43,16 @@ def index():
     genre_counts = df.groupby('genre').count()['message']
     genre_names = list(genre_counts.index)
     
+    # count average message length for each genre
+    df['message_length'] = df.message.map(lambda m: len(m))
+    genre_message_length = df.groupby('genre').mean()['message_length']
+    genre_message_length_name = genre_message_length.index.tolist()
+    
+    # category distribution
+    categories = df.drop(['id', 'message_length'], axis=1).select_dtypes('int64')
+    cat_names = list(categories.columns)
+    cat_percentage = (categories.values.mean(axis=0) * 100).tolist()
+    
     # create visuals
     # TODO: Below is an example - modify to create your own visuals
     graphs = [
@@ -61,6 +71,44 @@ def index():
                 },
                 'xaxis': {
                     'title': "Genre"
+                }
+            }
+        },
+        
+        {
+            'data': [
+                Bar(
+                    x=genre_message_length_name,
+                    y=genre_message_length
+                )
+            ],
+
+            'layout': {
+                'title': 'Average length of the message by genre',
+                'yaxis': {
+                    'title': "Average Message Length"
+                },
+                'xaxis': {
+                    'title': "Genre"
+                }
+            }
+        },
+        
+        {
+            'data': [
+                Bar(
+                    x=cat_names,
+                    y=cat_percentage
+                )
+            ],
+
+            'layout': {
+                'title': 'Percentage of Category',
+                'yaxis': {
+                    'title': "Percentage of Category"
+                },
+                'xaxis': {
+                    'title': "Category"
                 }
             }
         }
