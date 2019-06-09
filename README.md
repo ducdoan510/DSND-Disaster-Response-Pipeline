@@ -21,9 +21,9 @@ Your project will include a web app where an emergency worker can input a new me
 
 ### File Structure
 
-1. Flask web app: _/app_ folder contains a _run.py_ that can be run to start the Flask web server
-2. ETL Pipleline: _/data_ folder contains 2 csv files used in this project and a _process_data.py_ including ETL steps
-3. Machine Learning Pipeline: _/model_ folder contains _train_classifier.py_ file to build a model on the given dataset
+1. Flask web app: _app_ folder contains a _run.py_ that can be run to start the Flask web server
+2. ETL Pipleline: _data_ folder contains 2 csv files used in this project and a _process_data.py_ including ETL steps
+3. Machine Learning Pipeline: _model_ folder contains _train_classifier.py_ file to build a model on the given dataset
 
 ### Acknowledge
 
